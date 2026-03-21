@@ -49,6 +49,7 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
+    "expo-module-scripts": "^55.0.2",
     "tsx": "^4.21.0",
     "typescript": "~5.9.2"
   },

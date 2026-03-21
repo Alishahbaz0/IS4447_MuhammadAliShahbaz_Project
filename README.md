@@ -1,50 +1,40 @@
-# Welcome to your Expo app 👋
+# Habit Tracker Mobile App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+#### This is a simple react native mobile app designed to help users keep track of their daily activities.
 
-## Get started
+## Features:
 
-1. Install dependencies
+- User registration and login
 
-   ```bash
-   npm install
-   ```
+## How to Run:
+1. in PowerShell terminal, use "npx expo start"
+2. Start android emulator, or use camera for iOS.
 
-2. Start the app
+## Sample Data: 
 
-   ```bash
-   npx expo start
-   ```
 
-In the output, you'll find options to open the app in a
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## References:
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+----- Iteration 1: Project Setup -----
 
-## Get a fresh project
+1. Expo Tutorial, Official Documentation, Available at:
+https://docs.expo.dev/tutorial/introduction/
 
-When you're ready, run:
+2. React Native for Dummies, YouTube Tutorial, Available at:
+https://www.youtube.com/watch?v=BUXnASp_WyQ
 
-```bash
-npm run reset-project
-```
+3. React Context for managing dark/light themes, Log Rocket DBlogpost, Available at:
+https://blog.logrocket.com/react-context-tutorial/
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+4. Using Context for colour themes, Amit Kumar Blogpost, Available at:
+https://dev.to/amitkumar13/managing-themes-in-react-native-using-context-api-3dk2
 
-## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
+----- Iteration 2: Database Set-up + Registration and Login -----
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+5. Drizzle and React Native (Expo): Local SQLite Setup, Log Rocket Blogpost, Available at:
+https://blog.logrocket.com/drizzle-react-native-expo-sqlite/
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+6. Simplified Login and Registration with React Native, Khaoula's DEV tutos, YouTube Tutorial, Available at:
+https://www.youtube.com/watch?v=tOrIqrwABu4&t=287s
