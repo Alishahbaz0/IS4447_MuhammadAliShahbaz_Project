@@ -23,7 +23,7 @@ export default function Login() {
     setLoading(false);
 
     if (result.success) {
-      setTimeout(() => router.replace('/home'), 100);
+      setTimeout(() => router.replace('/(tabs)'), 100);
     } else {
       Alert.alert('Login failed', result.error || 'Unknown error');
     }
@@ -59,7 +59,7 @@ export default function Login() {
         </View>
 
         <PrimaryButton
-          label={loading ? 'Logging in...' : 'LogIn'}
+          label={loading ? 'Logging in...' : 'Log In'}
           onPress={handleLogin}
           disabled={loading}
         />

@@ -38,3 +38,18 @@ https://blog.logrocket.com/drizzle-react-native-expo-sqlite/
 
 6. Simplified Login and Registration with React Native, Khaoula's DEV tutos, YouTube Tutorial, Available at:
 https://www.youtube.com/watch?v=tOrIqrwABu4&t=287s
+
+
+----- Iteration 3: Categories CRUD -----
+
+7. JavaScript Tabs with Expo Router, Expo Documentation, Available at:
+https://docs.expo.dev/router/advanced/tabs/
+
+8. Adding Navigation (Different Tabs), Expo Documentation, Available at:
+https://docs.expo.dev/tutorial/add-navigation/
+
+9. Using UseLocalSearchParams with dynamic routes, Expo Documentation, Available at:
+https://docs.expo.dev/router/reference/url-parameters/
+
+10. Expo Router Tab Navigation, Aaron Saunders, YouTube Tutorial, Available at:
+https://www.youtube.com/watch?v=ZCj85YJZF04

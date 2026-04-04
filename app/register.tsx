@@ -23,7 +23,7 @@ export default function Register() {
     setLoading(false);
 
     if (result.success) {
-      setTimeout(() => router.replace('./home'), 100);
+      setTimeout(() => router.replace('/(tabs)'), 100);
     } else {
       Alert.alert('Registration Failed', result.error || 'Unknown error');
     }
