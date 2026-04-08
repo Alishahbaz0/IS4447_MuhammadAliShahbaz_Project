@@ -53,3 +53,17 @@ https://docs.expo.dev/router/reference/url-parameters/
 
 10. Expo Router Tab Navigation, Aaron Saunders, YouTube Tutorial, Available at:
 https://www.youtube.com/watch?v=ZCj85YJZF04
+
+
+----- Iteration 4: Habits CRUD -----
+
+11. Search Filter React Native, Code with Beto, Available at:
+https://medium.com/@betomoedano01/search-filter-react-native-search-bar-tutorial-fe3069fa55b5
+
+
+12. useMemo, React Official Docs, Available at:
+https://react.dev/reference/react/useMemo
+
+
+13. React Pill, Neha, GitHub, Available at:
+https://github.com/Neha/react-pill

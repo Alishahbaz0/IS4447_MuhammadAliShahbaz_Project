@@ -70,7 +70,7 @@ export default function CategoryDetailScreen() {
         <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <ScreenHeader
-                    title={'${category.icon} ${category.name}'}
+                    title={`${category.icon} ${category.name}`}
                     subtitle={"Edit your category details"}
                 />
 

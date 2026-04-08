@@ -1,22 +1,22 @@
-import { ScrollView, StyleSheet } from 'react-native';
-import { useTheme } from '@/contexts/ThemeContext';
-import { useHabit } from '@/contexts/HabitContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import ScreenHeader from '@/components/ui/screen-header';
 import CategoryCard from '@/components/ui/CategoryCard';
-import { useRouter } from 'expo-router';
-import PrimaryButton from '@/components/ui/primary-button';
 import EmptyState from '@/components/ui/empty-state';
+import PrimaryButton from '@/components/ui/primary-button';
+import ScreenHeader from '@/components/ui/screen-header';
+import { Category, useHabit } from '@/contexts/HabitContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import { useRouter } from 'expo-router';
+import { ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // categories screen - lists all habit categories with their habit counts
 export default function CategoriesScreen() {
     const router = useRouter();
     const { colors } = useTheme();
-    const { categories } = useHabit();
+    const { categories, getHabitCountForCategory } = useHabit();
 
     return (
         <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
-            <ScreenHeader title="Your Categories" subtitle={'${categories.length} categories'} />
+            <ScreenHeader title="Your Categories" subtitle={`${categories.length} categories being tracked.`} />
 
             <PrimaryButton label="+ Add Category" onPress={() => router.push('/category/add' as any)} />
 
@@ -28,11 +28,11 @@ export default function CategoriesScreen() {
                         subtitle="Start by creating a category to organize your habits!"
                     />
                 ) : (
-                    categories.map((cat) => (
+                    categories.map((cat: Category) => (
                         <CategoryCard
                             key={cat.id}
                             category={cat}
-                            habitCount={0}
+                            habitCount={getHabitCountForCategory(cat.id)}
                         />
                     ))
                 )}
