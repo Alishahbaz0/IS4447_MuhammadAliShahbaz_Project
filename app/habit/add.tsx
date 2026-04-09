@@ -4,7 +4,7 @@
 import FormField from '@/components/ui/form-field';
 import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
-import { useHabit } from '@/contexts/HabitContext';
+import { useHabits } from '@/contexts/HabitContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -16,7 +16,7 @@ const FREQUENCIES = ['Daily', 'Weekly', 'Monthly'] as const;
 
 // screen for adding a new habit.
 export default function AddHabitScreen() {
-    const { addHabit, categories } = useHabit();
+    const { addHabit, categories } = useHabits();
     const { colors } = useTheme();
     const router = useRouter();
 

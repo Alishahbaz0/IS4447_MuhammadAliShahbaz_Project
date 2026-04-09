@@ -12,7 +12,7 @@ import FormField from '@/components/ui/form-field';
 import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
 import { CategoryColors, CategoryIcons } from '@/constants/theme';
-import { useHabit } from '@/contexts/HabitContext';
+import { useHabits } from '@/contexts/HabitContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -23,7 +23,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function CategoryDetailScreen() {
     const router = useRouter();
     const { colors } = useTheme();
-    const { categories, updateCategory, deleteCategory } = useHabit();
+    const { categories, updateCategory, deleteCategory } = useHabits();
     const { id } = useLocalSearchParams();
 
     // find the category from the cached list

@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/contexts/ThemeContext';
-import { useHabit } from '@/contexts/HabitContext';
-import { useRouter } from 'expo-router';
-import { CategoryColors, CategoryIcons } from '@/constants/theme';
-import ScreenHeader from '@/components/ui/screen-header';
-import PrimaryButton from '@/components/ui/primary-button';
 import FormField from '@/components/ui/form-field';
+import PrimaryButton from '@/components/ui/primary-button';
+import ScreenHeader from '@/components/ui/screen-header';
+import { CategoryColors, CategoryIcons } from '@/constants/theme';
+import { useHabits } from '@/contexts/HabitContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // screen for adding a new habit category, setting its name, icon, and color
 export default function AddCategoryScreen() {
     const router = useRouter();
     const { colors } = useTheme();
-    const { addCategory } = useHabit();
+    const { addCategory } = useHabits();
 
     // form state with sensible defaults
     const [name, setName] = useState('');

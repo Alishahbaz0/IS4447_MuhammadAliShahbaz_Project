@@ -1,15 +1,17 @@
 // ----- Iteration 4: Habits CRUD -----
 // Screen for viewing and editing details of a specific habit. Accessed by tapping on a habit card on the home screen.
 
-import { useEffect, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Alert, Pressable, StyleSheet, ScrollView, Text, View } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useHabit } from '@/contexts/HabitContext';
-import { useTheme } from '@/contexts/ThemeContext';
-import ScreenHeader from '@/components/ui/screen-header';
-import PrimaryButton from '@/components/ui/primary-button';
+// Updated as of ----- Iteration 5: Habit Logging ----- to allow viewing today's completion, streak, recent log history, etc.
+
 import FormField from '@/components/ui/form-field';
+import PrimaryButton from '@/components/ui/primary-button';
+import ScreenHeader from '@/components/ui/screen-header';
+import { useHabits } from '@/contexts/HabitContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const FREQUENCIES = ['Daily', 'Weekly', 'Monthly'] as const;
 
@@ -17,7 +19,17 @@ export default function HabitDetailsScreen() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const { colors } = useTheme();
-    const { habits, categories, getCategoryById, updateHabit, deleteHabit } = useHabit();
+    const { 
+        habits, 
+        categories, 
+        getCategoryById, 
+        updateHabit, 
+        deleteHabit,
+        toggleHabitToday,
+        isCompletedToday,
+        getStreak,
+        getLogsForHabit, 
+    } = useHabits();
 
     // find the habit based on the ID passed in the route params
     const habit = habits.find((h) => h.id === Number(id));
@@ -44,6 +56,12 @@ export default function HabitDetailsScreen() {
     if (!habit) return null;
 
     const category = getCategoryById(habit.categoryID);
+
+    // Iteration 5: habit logging 
+    const done = isCompletedToday(habit.id);
+    const streak = getStreak(habit.id);
+    const recentLogs = getLogsForHabit(habit.id).slice(0, 7);
+    const color = category?.color ?? colors.primary
 
     // saving the edited habit by validating inputs, updating the habit in the database, and toggling back to view mode on success
     const handleSave = async () => {
@@ -75,6 +93,51 @@ export default function HabitDetailsScreen() {
                     title={`${category?.icon ?? '🎯 '} ${habit.name}`}
                     subtitle={`${habit.frequency} • ${category?.name ?? 'Uncategorized'}`}
                 />
+
+                {/* Today's progress - completion toggle + streak count */}
+                {!editing && (
+                    <View style={[styles.todayCard, {backgroundColor: color + '18', borderColor: color + '40' }]}>
+                        <View style={styles.todayRow}>
+                            <View style={styles.todayInfo}>
+                                <Text style={[styles.todayLabel, { color: colors.textSecondary }]}>Today</Text>
+                                <Text style={[styles.todayStatus, { color }]}>
+                                    {done ? 'Completed ✓' : 'Not done yet'}
+                                </Text>
+                            </View>
+                            <View style={styles.streakInfo}>
+                                <Text style={[styles.streakNum, { color }]}>🔥 {streak}</Text>
+                                <Text style={[styles.streakLabel, {color: colors.textSecondary }]}>
+                                    day{streak !== 1 ? 's' : ''}
+                                </Text>
+                            </View>
+                        </View>
+                        <View style={{ marginTop: 12 }}>
+                            <PrimaryButton
+                                label={done ? 'Mark as Not Done' : 'Mark as Done'}
+                                onPress={() => toggleHabitToday(habit.id)}
+                                variant={done ? 'secondary' : 'primary'}
+                            />
+                        </View>
+                    </View>
+                )}
+                
+                {/* Recent log history - up to last 7 entries */}
+                {!editing && recentLogs.length > 0 && (
+                    <View style={{ marginBottom: 20 }}>
+                        <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>
+                            Recent Activity:
+                        </Text>
+                        {recentLogs.map((log) => (
+                            <View
+                                key={log.id}
+                                style={[styles.logRow, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+                            >
+                                <Text style={[styles.logDate, { color: colors.text }]}>{log.date}</Text>
+                                <Text style={[styles.logDone, { color }]}>✓ Completed</Text>
+                            </View>
+                        ))}
+                    </View>
+                )}
 
                 {/* Editing mode */}
                 {editing ? (
@@ -134,6 +197,7 @@ export default function HabitDetailsScreen() {
                             </View>
                         </View>
                     ) : (
+
                         // View mode - display habit details with edit and delete buttons
                         <View>
                             {habit.notes ? (
@@ -174,4 +238,29 @@ const styles = StyleSheet.create({
     notesLabel: { fontSize: 12, fontWeight: '600', marginBottom: 4, textTransform: 'uppercase'},
     notesText: { fontSize: 15 },
     actions: { marginTop: 8 },
+
+    // Today card styles
+    todayCard: { borderRadius: 14, borderWidth: 1, marginBottom: 20, padding: 16 },
+    todayRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+    todayInfo: { flex: 1 },
+    todayLabel: { fontSize: 12, fontWeight: '600', textTransform: 'uppercase' },
+    todayStatus: { fontSize: 20, fontWeight: '800', marginTop: 4 },
+    streakInfo: { alignItems: 'center' },
+    streakNum: { fontSize: 22, fontWeight: '800' },
+    streakLabel: { fontSize: 11, marginTop: 2 },
+
+    // Recent Activity styles
+    sectionLabel: { fontSize: 12, fontWeight: '600', marginBottom: 8, textTransform: 'uppercase' },
+    logRow: {
+        alignItems: 'center',
+        borderRadius: 10,
+        borderWidth: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 6,
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+    },
+    logDate: { fontSize: 14, fontWeight: '600' },
+    logDone: { fontSize: 13, fontWeight: '700' },
 });

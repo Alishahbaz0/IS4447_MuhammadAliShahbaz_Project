@@ -14,7 +14,7 @@ import HabitCard from '@/components/ui/HabitCard';
 import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
 import { useAuth } from '@/contexts/AuthContext';
-import { useHabit } from '@/contexts/HabitContext';
+import { useHabits } from '@/contexts/HabitContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
@@ -25,7 +25,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function HomeScreen() {
     const { user, logout } = useAuth();
     const { colors } = useTheme();
-    const { habits, categories, getCategoryById } = useHabit();
+    const { habits, categories, getCategoryById, isCompletedToday } = useHabits();
     const router = useRouter();
 
     // Search and filter state
@@ -41,6 +41,11 @@ export default function HomeScreen() {
         });
     }, [habits, search, selectedCategoryID]);
 
+    // Counting how many habits are completed today - used for a progress bar
+    const doneToday = habits.filter((h) => isCompletedToday(h.id)).length;
+    const totalHabits = habits.length;
+    const percent = totalHabits > 0 ? Math.round((doneToday / totalHabits) * 100) : 0;
+
     // logging out the user and redirecting to the login screen
     const handleLogout = () => {
         logout();
@@ -53,6 +58,33 @@ export default function HomeScreen() {
                 title={`Welcome ${user?.username ?? 'to HabitTracker'}`}
                 subtitle={`${habits.length} habit(s) being tracked.`}
             />
+
+            {/* ----- Iteration 5: Habits Logging ----- */}
+            {/* Adding a progress bar for users to see how many habits they have completed today */}
+            {/* 
+            I learned how to create a progress bar using the following online resources:
+            Build a React Native progress bar, Jeremy Kithome, Log Rocket blog, Available at:
+            https://blog.logrocket.com/build-react-native-progress-bar/
+            */}
+            {totalHabits > 0 && (
+                <View style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+                    <View style={styles.progressHeader}>
+                        <Text style={[styles.progressLabel, { color: colors.textSecondary }]}>Today's progress:</Text>
+                        <Text style={[styles.progressCount, { color: colors.text }]}>
+                            {doneToday} / {totalHabits}
+                        </Text>
+                    </View>
+                    <View style={[styles.progressTrack, {backgroundColor: colors.surfaceAlt }]}>
+                        <View
+                            style={[
+                                styles.progressFill,
+                                { backgroundColor: colors.primary, width: `${percent}%`},
+                            ]}
+                        />
+                    </View>
+                </View>
+            )}
+
 
             {/* ----- Iteration 4: Habits CRUD ----- */}
             {/* Search input */}
@@ -146,7 +178,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         fontSize: 15,
     },
-    pills: { marginBottom: 12, maxHeight: 44 },
+    pills: { marginBottom: 10, maxHeight: 44 },
     pillsContent: { gap: 8, paddingRight: 10 },
     pill: {
         paddingHorizontal: 14,
@@ -156,4 +188,30 @@ const styles = StyleSheet.create({
     },
     pillText: { fontSize: 13, fontWeight: '600' },
     list: { paddingBottom: 24, paddingTop: 8 },
+
+    // ----- Iteration 5: Habits Logging -----
+    // Progress bar styling
+    progressCard: {
+        borderRadius: 14,
+        borderWidth: 1,
+        marginBottom: 12,
+        padding: 14,
+    },
+    progressHeader: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 8,
+    },
+    progressLabel: { fontSize: 12, fontWeight: '600', textTransform: 'uppercase' },
+    progressCount: { fontSize: 18, fontWeight: '800' },
+    progressTrack: {
+        borderRadius: 999,
+        height: 8,
+        overflow: 'hidden',
+    },
+    progressFill: {
+        borderRadius: 999,
+        height: '100%',
+    },
 });

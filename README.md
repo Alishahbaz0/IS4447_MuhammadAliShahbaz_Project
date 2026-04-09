@@ -67,3 +67,18 @@ https://react.dev/reference/react/useMemo
 
 13. React Pill, Neha, GitHub, Available at:
 https://github.com/Neha/react-pill
+
+
+----- Iteration 5: Habit Logging -----
+
+14. Date Global Objects, Mozilla, Official JS Documentation, Available at:
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+
+15. Streak Tracking, Harshit Masiwal's Workout Tracker, Mintlify Documentation, Available at:
+https://www.mintlify.com/harshitmasiwal/WorkoutTracker/guide/streak-tracking
+
+16. main/hooks/use-streaks.ts, Streak-app-react-native, ShamilWorkspace, GitHub Repository, Available at:
+https://github.com/shamilworkspace/streak-app-react-native/blob/main/hooks/use-streaks.ts
+
+17. Build a React Native progress bar, Jeremy Kithome, Log Rocket blog, Available at:
+https://blog.logrocket.com/build-react-native-progress-bar/

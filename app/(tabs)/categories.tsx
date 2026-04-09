@@ -2,7 +2,7 @@ import CategoryCard from '@/components/ui/CategoryCard';
 import EmptyState from '@/components/ui/empty-state';
 import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
-import { Category, useHabit } from '@/contexts/HabitContext';
+import { Category, useHabits } from '@/contexts/HabitContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useRouter } from 'expo-router';
 import { ScrollView, StyleSheet } from 'react-native';
@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function CategoriesScreen() {
     const router = useRouter();
     const { colors } = useTheme();
-    const { categories, getHabitCountForCategory } = useHabit();
+    const { categories, getHabitCountForCategory } = useHabits();
 
     return (
         <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
