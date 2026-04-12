@@ -17,7 +17,7 @@ export default function HabitCard({ habit, category }: Props) {
     const router = useRouter();
     const { colors } = useTheme();
     // ----- Iteration 5: Habit Logging -----
-    const { isCompletedToday, toggleHabitToday, getStreak } = useHabits();
+    const { isCompletedToday, toggleHabitToday, getStreak, getTargetProgress } = useHabits();
 
     // setting a default colour if there's no set category
     const color = category?.color ?? colors.primary;
@@ -25,7 +25,8 @@ export default function HabitCard({ habit, category }: Props) {
     // ----- Iteration 5: Habit Logging -----
     const done = isCompletedToday(habit.id);
     const streak = getStreak(habit.id);
-
+    // ----- Iteration 6: Target + Progress -----
+    const progress = getTargetProgress(habit.id);
     // toggling completion
     const handleToggle = async () => {
         await toggleHabitToday(habit.id);
@@ -69,12 +70,24 @@ export default function HabitCard({ habit, category }: Props) {
                     </Text>
                 </View>
 
-                {/* Streak Badge - only shown when the user has built up a streak */}
-                {streak > 0 && (
-                    <View style={[styles.meta, { backgroundColor: color + '20' }]}>
-                        <Text style={[styles.streakText, {color}]}>🔥 {streak}</Text>
-                    </View>
-                )}
+                {/* 
+                Streak Badge - only shown when the user has built up a streak 
+                Updated as of Iteration 6 to include target progress
+                */}
+                <View style={styles.badges}>
+                    {progress && (
+                        <View style={[styles.targetBadge, { backgroundColor: color + '20' }]}>
+                            <Text style={[styles.targetBadgeText, { color }]}>
+                                {progress.current}/{progress.goal}
+                            </Text>
+                        </View>
+                    )}
+                    {streak > 0 && (
+                        <View style={[styles.streakBadge, { backgroundColor: color + '20' }]}>
+                            <Text style={[styles.streakText, {color}]}>🔥 {streak}</Text>
+                        </View>
+                    )}
+                </View>
             </Pressable>
         </View>
     );
@@ -112,4 +125,11 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
      },
      streakText: { fontSize: 13, fontWeight: '700' },
+     badges: { alignItems: 'flex-end', gap: 4 },
+     targetBadge: {
+        borderRadius: 999,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+     },
+     targetBadgeText: { fontSize: 13, fontWeight: '700' },
 });

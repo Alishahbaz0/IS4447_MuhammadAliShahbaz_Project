@@ -50,10 +50,10 @@ export const habitLogs = sqliteTable("habit_logs", {
 export const targets = sqliteTable("targets", {
     id: integer("id").primaryKey({ autoIncrement: true }),
     userID: integer("user_id").notNull().references(() => users.id, {onDelete: "cascade"}),
-    habitID: integer("habit_id").notNull().references(() => habits.id, {onDelete: "cascade"}),
-    categoryID: integer("category_id").notNull().references(() => categories.id, {onDelete: "cascade"}),
-    type: text("type").notNull(),                   // e.g., "weekly" or "monthly"
-    goalValue: integer("goal_value").notNull(),     // e.g., 5 (for "Drink Water" habit, goal is to drink 5 times a week)
+    habitID: integer("habit_id").references(() => habits.id, {onDelete: "cascade"}),
+    categoryID: integer("category_id").references(() => categories.id, {onDelete: "cascade"}),
+    type: text("type").notNull().default('weekly'),                   // e.g., "weekly" or "monthly"
+    goalValue: integer("goal_value").notNull().default(5),     // e.g., 5 (for "Drink Water" habit, goal is to drink 5 times a week)
     createdAt: integer("created_at", { mode: "timestamp" })
         .notNull()
         .$defaultFn(() => new Date()),

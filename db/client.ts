@@ -3,7 +3,7 @@ import { openDatabaseSync } from 'expo-sqlite';
 import * as schema from './schema';
 
 // Open (or create) the SQLite database file
-const sqlite = openDatabaseSync('habit_tracker.db');
+const sqlite = openDatabaseSync('habit_tracker_it6.db');
 
 // Initialise tables — called once from the root layout on app start
 export async function initDatabase() {

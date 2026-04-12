@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/db/client';
-import { categories, habitLogs, habits } from '@/db/schema';
+import { categories, habitLogs, habits, targets } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
@@ -37,7 +37,19 @@ export type HabitLog = {
     notes: string | null;
 };
 
+// ----- Iteration 6: Targets + Progress -----
+// Shape of a target - the weekly or monthly goal for a habit
+export type Target = {
+    id: number;
+    userID: number;
+    habitID: number | null;
+    categoryID: number | null;
+    type: string;
+    goalValue: number;
+    createdAt: Date | null;
+}
 
+// ----- Iteration 5: Habit Logging -----
 // writing a helper function to return today's date as YYYY-MM-DD string
 // I used the following online resources to learn how to use date functions:
 // Date Global Objects, Mozilla, Official JS Documentation, Available at:
@@ -50,6 +62,26 @@ function todayString() {
     return `${y}-${m}-${day}`;
 }
 
+// ----- Iteration 6: Targets + Progress -----
+// helper function for getting the start of the current week as a date string
+function startOfWeekString() {
+    const d = new Date();
+    const day = d.getDay(); // 0 = Sunday, 1 = Monday
+    const diff = day === 0 ? 6 : day - 1; // shifting so monday = 0
+    d.setDate(d.getDate() - diff);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${dd}`;
+}
+
+// helper function for gettiong the start of the current month as a date string
+function startOfMonthString() {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}-01`;
+}
 
 
 // all habit/category-related states and actions for the app
@@ -57,6 +89,7 @@ type HabitContextType = {
     categories: Category[];
     habits: Habit[];
     logs: HabitLog[];
+    targetList: Target[];
     refreshAll: () => Promise<void>;
 
     // ----- Iteration 3: Categories CRUD -----
@@ -80,6 +113,13 @@ type HabitContextType = {
     isCompletedToday: (habitId: number) => boolean;
     getStreak: (habitId: number) => number;
     getLogsForHabit: (habitId: number) => HabitLog[];
+
+    // ----- Iteration 6: Target + Progress -----
+    // target actions
+    setTarget: (habitId: number, type: 'weekly' | 'monthly', goalValue: number) => Promise<void>;
+    removeTarget: (targetId: number) => Promise<void>;
+    getTargetForHabit: (habitId: number) => Target | undefined;
+    getTargetProgress: (habitId: number) => { current: number; goal: number; percent: number} | null;
 };
 
 const HabitContext = createContext<HabitContextType | null>(null);
@@ -90,6 +130,7 @@ export function HabitProvider({ children }: { children: React.ReactNode }) {
     const [categoryList, setCategories] = useState<Category[]>([]);
     const [habitList, setHabits] = useState<Habit[]>([]);
     const [logList, setLogs] = useState<HabitLog[]>([]);
+    const [targetListState, setTargets] = useState<Target[]>([]);
 
     // reloading all data from the database for the current user
     const refreshAll = useCallback(async () => {
@@ -97,6 +138,7 @@ export function HabitProvider({ children }: { children: React.ReactNode }) {
             setCategories([]);
             setHabits([]);
             setLogs([]);
+            setTargets([]);
             return;
         }
         // ----- Iteration 3: Categories CRUD -----
@@ -106,6 +148,10 @@ export function HabitProvider({ children }: { children: React.ReactNode }) {
         // ----- Iteration 4: Habits CRUD -----
         const h = await db.select().from(habits).where(eq(habits.userID, user.id));
         setHabits(h as Habit[]);
+
+        // ----- Iteration 6: Targets + Progress -----
+        const t = await db.select().from(targets).where(eq(targets.userID, user.id));
+        setTargets(t as Target[]);
         
         // ----- Iteration 5: Habit Logging -----
         const habitIds = h.map((hh) => hh.id);
@@ -213,7 +259,6 @@ export function HabitProvider({ children }: { children: React.ReactNode }) {
     // main/hooks/use-streaks.ts, Streak-app-react-native, ShamilWorkspace, GitHub Repository, Available at:
     // https://github.com/shamilworkspace/streak-app-react-native/blob/main/hooks/use-streaks.ts
 
-
     const getStreak = (habitID: number) => {
         const habitLogsForHabit = logList
         .filter((log) => log.habitID === habitID && log.completed === 1)
@@ -257,12 +302,66 @@ export function HabitProvider({ children }: { children: React.ReactNode }) {
     const getLogsForHabit = (habitId: number) =>
         logList.filter((log) => log.habitID === habitId).sort((a, b) => b.date.localeCompare(a.date));
 
+
+    // ----- Iteration 6: Targets + Progress -----
+    // Target actions 
+
+    // set or replace a target for a habit (only one target per habit)
+    const setTarget = async (habitId: number, type: 'weekly' | 'monthly', goalValue: number) => {
+        if (!user) return;
+
+        // removing existing target before adding a new one
+        const existing = targetListState.find((t) => t.habitID === habitId);
+        if (existing) {
+            await db.delete(targets).where(eq(targets.id, existing.id));
+        }
+
+        await db.insert(targets).values({
+            userID: user.id,
+            habitID: habitId,
+            categoryID: null,
+            type,
+            goalValue,
+        });
+        await refreshAll();
+    };
+
+    // deleting a target by ID
+    const removeTarget = async (targetID: number) => {
+        await db.delete(targets).where(eq(targets.id, targetID));
+        await refreshAll();
+    };
+
+    // looking up the active target for a habit
+    const getTargetForHabit = (habitID: number) =>
+        targetListState.find((t) => t.habitID === habitID);
+
+    // calculating how many completions a habit has in the current week or month
+    // returns null if no target set
+    const getTargetProgress = (habitID: number) => {
+        const target = getTargetForHabit(habitID);
+        if (!target) return null;
+
+        // determine the start of the current period
+        const periodStart = target.type === 'weekly'  ? startOfWeekString() : startOfMonthString();
+
+        // counting completions for this habit since the period start
+        const completions = logList.filter(
+            (log) => log.habitID === habitID && log.completed === 1 && log.date >= periodStart
+        ).length;
+
+        const percent = target.goalValue > 0 ? Math.min(100, Math.round((completions / target.goalValue) * 100)) : 0;
+
+        return { current: completions, goal: target.goalValue, percent };
+    };
+
     return (
         <HabitContext.Provider 
         value={{ 
             categories: categoryList,
             habits: habitList, 
             logs: logList,
+            targetList : targetListState,
             refreshAll, 
             addCategory, 
             updateCategory, 
@@ -277,6 +376,10 @@ export function HabitProvider({ children }: { children: React.ReactNode }) {
             isCompletedToday,
             getStreak,
             getLogsForHabit, 
+            setTarget,
+            removeTarget,
+            getTargetForHabit,
+            getTargetProgress
         }}
     >
         {children}

@@ -28,7 +28,11 @@ export default function HabitDetailsScreen() {
         toggleHabitToday,
         isCompletedToday,
         getStreak,
-        getLogsForHabit, 
+        getLogsForHabit,
+        getTargetForHabit,
+        getTargetProgress,
+        setTarget,
+        removeTarget, 
     } = useHabits();
 
     // find the habit based on the ID passed in the route params
@@ -42,6 +46,12 @@ export default function HabitDetailsScreen() {
     const [categoryID, setCategoryID] = useState<number | null>(null);
     const [frequency, setFrequency] = useState<string>('Daily');
     const [notes, setNotes] = useState('');
+
+    // ----- Iteration 6: Target + Progress -----
+    // target picker state
+    const [showTargetPicker, setShowTargetPicker] = useState(false);
+    const [targetType, setTargetType] = useState<'weekly' | 'monthly'>('weekly');
+    const [targetGoal, setTargetGoal] = useState('5');
 
     // when the habit loads, populate the form fields with the existing habit data
     useEffect(() => {
@@ -62,7 +72,11 @@ export default function HabitDetailsScreen() {
     const streak = getStreak(habit.id);
     const recentLogs = getLogsForHabit(habit.id).slice(0, 7);
     const color = category?.color ?? colors.primary
+    // iteration 6: target + progress
+    const target = getTargetForHabit(habit.id);
+    const progress = getTargetProgress(habit.id);
 
+    // ----- Iteration 5: Habit Logging -----
     // saving the edited habit by validating inputs, updating the habit in the database, and toggling back to view mode on success
     const handleSave = async () => {
         if (!name.trim()) return Alert.alert('Error', 'Please enter a habit name.');
@@ -86,6 +100,33 @@ export default function HabitDetailsScreen() {
         ]);
     };
 
+    // ----- Iteration 6: Targets + Progress -----
+    // saving the new target and closing the picker
+    const handleSetTarget = async () => {
+        const goal = parseInt(targetGoal, 10);
+        if (isNaN(goal) || goal < 1) {
+            return Alert.alert('Error', 'Please enter a valid goal number.');
+        }
+        await setTarget(habit.id, targetType, goal);
+        setShowTargetPicker(false);
+    };
+
+    // remove the existing target
+    const handleRemoveTarget = async () => {
+        if (!target) return;
+        Alert.alert('Remove Target', 'Remove the target for this habit?', [
+            { text: 'Cancel', style: 'cancel' },
+            {
+                text: 'Remove',
+                style: 'destructive',
+                onPress: async () => {
+                    await removeTarget(target.id);
+                },
+            },
+        ]);
+    };
+
+    // displaying habit page 
     return (
         <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -138,6 +179,107 @@ export default function HabitDetailsScreen() {
                         ))}
                     </View>
                 )}
+
+                {/* ----- Iteration 6: Target Progress Section ----- */}
+                {!editing && (
+                    <View style={{ marginBottom: 20 }}>
+                        <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>
+                            {target ? `${target.type} target` : 'Target'}
+                        </Text>
+
+                        {target && progress ? (
+                            // showing current target with progress bar
+                            <View style={[styles.targetCard, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+                                <View style={styles.targetRow}>
+                                    <Text style={[styles.targetCount, { color: colors.text }]}>
+                                        {progress.current} / {progress.goal}
+                                    </Text>
+                                    <Text style={[styles.targetPercent, { color }]}>
+                                        {progress.percent}%
+                                    </Text>
+                                </View>
+                                <View style={[styles.progressTrack, { backgroundColor: colors.surfaceAlt }]}>
+                                    <View
+                                        style={[
+                                            styles.progressFill,
+                                            { backgroundColor: color, width: `${progress.percent}%` },
+                                        ]}
+                                    />
+                                </View>
+                                <Text style={[styles.targetMeta, { color: colors.textSecondary }]}>
+                                    {progress.current >= progress.goal
+                                        ? '🎉 Goal reached!'
+                                        : `${progress.goal - progress.current} more to go this ${target.type === 'weekly' ? 'week' : 'month'}`}
+                                </Text>
+                                <View style={{ marginTop: 12 }}>
+                                    <PrimaryButton 
+                                        label="Change Target"
+                                        variant="secondary"
+                                        onPress={() => {
+                                            setTargetType(target.type as 'weekly' | 'monthly');
+                                            setTargetGoal(target.goalValue.toString());
+                                            setShowTargetPicker(true);
+                                        }}
+                                    />
+                                    <View style={{ height: 8 }} />
+                                    <PrimaryButton label="Remove Target" variant="danger" onPress={handleRemoveTarget} />
+                                </View>
+                            </View>
+                        ) : showTargetPicker ? null : (
+                            // no target set - show button to add one
+                            <View style={[styles.targetCard, { backgroundColor: colors.card, borderColor: colors.cardBorder, marginTop: 10 }]}>
+                                <Text style={[styles.targetEmptyText, { color: colors.textSecondary }]}>
+                                    Set a goal to track your progress
+                                </Text>
+                                <PrimaryButton label="+Set Target" onPress={() => setShowTargetPicker(true)} />
+                            </View>   
+                        )}
+
+                        {/* Target Picker Form - shown when adding or changing */}
+                        {showTargetPicker && (
+                            <View style={[styles.targetCard, { backgroundColor: colors.card, borderColor: colors.cardBorder, marginTop: 10 }]}>
+                                <Text style={[styles.label, { color: colors.textSecondary }]}>Period</Text>
+                                <View style={styles.pillGrid}>
+                                    {(['weekly', 'monthly'] as const).map((t) => (
+                                        <Pressable
+                                            key={t}
+                                            onPress={() => setTargetType(t)}
+                                            style={[
+                                                styles.pill,
+                                                {
+                                                    backgroundColor: targetType === t ? color + '25' : colors.surfaceAlt,
+                                                    borderColor: targetType === t ? color : colors.border,
+                                                },
+                                            ]}
+                                        >
+                                            <Text style={[styles.pillText, { color: targetType === t ? color : colors.textSecondary, textTransform: 'capitalize' }]}>
+                                                {t}
+                                            </Text>
+                                        </Pressable>
+                                    ))}
+                                </View>
+
+                                {/* Goal number input */}
+                                <View style={{ marginTop: 14 }}>
+                                    <FormField
+                                        label={`How many times per ${targetType === 'weekly' ? 'week' : 'month'}?`}
+                                        value={targetGoal}
+                                        onChangeText={setTargetGoal}
+                                        placeholder='e.g. 5'
+                                        keyboardType="numeric"
+                                    />
+                                </View>    
+
+                                <View style={{ marginTop: 14 }}>
+                                    <PrimaryButton label="Save Target" onPress={handleSetTarget} />
+                                    <View style={{ height: 8 }} />
+                                    <PrimaryButton label="Cancel" variant="secondary" onPress={() => setShowTargetPicker(false)} />
+                                </View>
+                            </View>
+                        )}
+                    </View>
+                )}
+
 
                 {/* Editing mode */}
                 {editing ? (
@@ -263,4 +405,16 @@ const styles = StyleSheet.create({
     },
     logDate: { fontSize: 14, fontWeight: '600' },
     logDone: { fontSize: 13, fontWeight: '700' },
+
+    // ----- Iteration 6: Targets + Progress ------
+    // target and progress styles
+    targetCard: { borderRadius: 14, borderWidth: 1, padding: 16 },
+    targetRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8},
+    targetCount: { fontSize: 22, fontWeight: '800' },
+    targetPercent: { fontSize: 18, fontWeight: '700' },
+    targetMeta: { fontSize: 13, marginTop: 8 },
+    targetEmptyText: { fontSize: 14, marginBottom: 12, textAlign: 'center' },
+    progressTrack: { borderRadius: 999, height: 10, overflow: 'hidden' },
+    progressFill: { borderRadius: 999, height: '100%' },
+
 });

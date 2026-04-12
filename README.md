@@ -82,3 +82,9 @@ https://github.com/shamilworkspace/streak-app-react-native/blob/main/hooks/use-s
 
 17. Build a React Native progress bar, Jeremy Kithome, Log Rocket blog, Available at:
 https://blog.logrocket.com/build-react-native-progress-bar/
+
+
+----- Iteration 6: Targets + Progress -----
+
+18. React Native Full Course 2025, PedroTech, Covers creating a habit tracker app, Available at:
+https://www.youtube.com/watch?v=J50gwzwLvAk&t=1796s
