@@ -5,6 +5,10 @@
 ## Features:
 
 - User registration and login
+- Categories CRUD
+- Habits CRUD
+- Habit logging and targets
+- Insights with chart visualisations
 
 ## How to Run:
 1. in PowerShell terminal, use "npx expo start"
@@ -88,3 +92,12 @@ https://blog.logrocket.com/build-react-native-progress-bar/
 
 18. React Native Full Course 2025, PedroTech, Covers creating a habit tracker app, Available at:
 https://www.youtube.com/watch?v=J50gwzwLvAk&t=1796s
+
+
+----- Iteration 7: Charts + Insights  -----
+
+19. React Native Charts for Beginners, CodewithBeto, YouTube, Available at:
+https://www.youtube.com/watch?v=AkujZtOz9c4
+
+20. react-native-chart-kit, indiespirit, GitHub, Available at:
+https://github.com/indiespirit/react-native-chart-kit
