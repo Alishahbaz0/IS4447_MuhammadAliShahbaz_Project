@@ -53,6 +53,14 @@ export default function TabLayout() {
                     tabBarIcon: ({ color, size }) => <Ionicons name="stats-chart" size={size} color={color} />
                 }}
             />
+            {/* ----- Iteration 8: Seed data + Profile ----- */}
+            <Tabs.Screen 
+                name="profile"
+                options={{
+                    title: "Profile",
+                    tabBarIcon: ({ color, size }) => <Ionicons name="person-circle" size={size} color={color} />,
+                }}
+            />
         </Tabs>
     );
 }

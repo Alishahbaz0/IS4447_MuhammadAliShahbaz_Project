@@ -49,7 +49,7 @@ export default function HomeScreen() {
     // logging out the user and redirecting to the login screen
     const handleLogout = () => {
         logout();
-        setTimeout(() => router.replace('/'), 100);
+        setTimeout(() => router.replace('/login'), 100);
     };
 
     return (
@@ -178,11 +178,11 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         fontSize: 15,
     },
-    pills: { marginBottom: 10, maxHeight: 44 },
+    pills: { marginBottom: 12, maxHeight: 44 },
     pillsContent: { gap: 8, paddingRight: 10 },
     pill: {
         paddingHorizontal: 14,
-        paddingVertical: 8,
+        paddingVertical: 10,
         borderRadius: 999,
         borderWidth: 1,
     },

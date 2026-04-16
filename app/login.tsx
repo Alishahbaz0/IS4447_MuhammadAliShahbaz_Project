@@ -7,43 +7,40 @@ import { useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function Register() {
+// Default screen — login form
+export default function Login() {
   const router = useRouter();
-  const { register } = useAuth();
+  const { login } = useAuth();
   const { colors } = useTheme();
 
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleRegister = async () => {
+  const handleLogin = async () => {
     setLoading(true);
-    const result = await register(username, email, password);
+    const result = await login(email, password);
     setLoading(false);
 
     if (result.success) {
       setTimeout(() => router.replace('/(tabs)'), 100);
     } else {
-      Alert.alert('Registration Failed', result.error || 'Unknown error');
+      Alert.alert('Login failed', result.error || 'Unknown error');
     }
   };
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
-
+      
       {/* App Branding */}
       <View style={styles.container}>
         <Text style={[styles.logo, { color: colors.primary }]}>Habit Tracker</Text>
+        <Text style={[styles.tagline, { color: colors.textSecondary }]}>
+          by Muhammad Ali Shahbaz
+        </Text>
 
-        {/* Registration Form */}
+        {/* Login Form */}
         <View style={styles.form}>
-          <FormField
-            label="Username"
-            value={username}
-            onChangeText={setUsername}
-            placeholder="John Smith"
-          />
           <FormField
             label="Email"
             value={email}
@@ -56,27 +53,27 @@ export default function Register() {
             label="Password"
             value={password}
             onChangeText={setPassword}
-            placeholder="Enter your password"
+            placeholder="Your password"
             secureTextEntry
           />
         </View>
 
         <PrimaryButton
-          label={loading ? 'Registering new user...' : 'Register'}
-          onPress={handleRegister}
+          label={loading ? 'Logging in...' : 'Log In'}
+          onPress={handleLogin}
           disabled={loading}
         />
 
-        {/* Footer with navigation to Login */}
+        {/* Footer with navigation to Register */}
         <View style={styles.footer}>
           <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-            Already have an account?{' '}
+            Don't have an account?{' '}
           </Text>
           <Text
             style={[styles.link, { color: colors.primary }]}
-            onPress={() => router.replace('/login')}
+            onPress={() => router.push('/register')}
           >
-            Log in
+            Sign Up
           </Text>
         </View>
       </View>
@@ -87,7 +84,8 @@ export default function Register() {
 const styles = StyleSheet.create({
   safe: { flex: 1 },
   container: { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
-  logo: { fontSize: 36, fontWeight: '800', textAlign: 'center', marginBottom: 40 },
+  logo: { fontSize: 36, fontWeight: '800', textAlign: 'center' },
+  tagline: { fontSize: 15, textAlign: 'center', marginTop: 8, marginBottom: 40 },
   form: { marginBottom: 8 },
   footer: { flexDirection: 'row', justifyContent: 'center', marginTop: 24 },
   footerText: { fontSize: 14 },

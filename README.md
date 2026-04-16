@@ -16,6 +16,12 @@
 
 ## Sample Data: 
 
+email: sample@email.com
+password: 123456 
+
+OR 
+
+Create your own account and use the "Load Sample Data" option within the "Profile" tab to populate your account with sample data entries.
 
 
 ## References:
@@ -101,3 +107,8 @@ https://www.youtube.com/watch?v=AkujZtOz9c4
 
 20. react-native-chart-kit, indiespirit, GitHub, Available at:
 https://github.com/indiespirit/react-native-chart-kit
+
+----- Iteration 8: Seed Data + Profile -----
+
+21. react_native-restate/.../seed.ts, Adrian Hajdin, GitHub, Available at:
+https://github.com/adrianhajdin/react_native-restate/blob/main/lib/seed.ts
