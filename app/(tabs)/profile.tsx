@@ -15,14 +15,16 @@ import { useHabits } from '@/contexts/HabitContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { seedSampleData, wipeUserData } from '@/db/seed';
 import { useRouter } from 'expo-router';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+// ----- Iteration 9: CSV Export -----
+import { generateCSV, shareCSV } from '../utils/exportCSV';
 
 // Profile / settings tab
 export default function ProfileScreen() {
     const { user, logout, deleteAccount } = useAuth();
-    const { colors } = useTheme();
-    const { refreshAll, habits, categories } = useHabits();
+    const { colors, mode, setMode } = useTheme();
+    const { refreshAll, habits, categories, logs } = useHabits();
     const router = useRouter();
 
     // Load sample data - confirms first since it replaces existing data
@@ -92,6 +94,16 @@ export default function ProfileScreen() {
         );
     };
 
+    // ----- Iteration 9: Export CSV -----
+    // handler for exporting CSV
+    const handleExportCSV = () => {
+        if (logs.length === 0) {
+            return Alert.alert('No Data', 'Complete some habits first before exporting data.');
+        }
+        const csv = generateCSV(logs, habits, categories);
+        shareCSV(csv);
+    };
+
     // page layout
     return (
         <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
@@ -120,12 +132,50 @@ export default function ProfileScreen() {
                 <PrimaryButton label="Load Sample Data" onPress={handleLoadSampleData} />
                 <View style={{ height: 10 }} />
                 <PrimaryButton label="Clear All Data" variant="secondary" onPress={handleClearData} />
+                {/* ----- Iteration 9: CSV Export ----- 
+                 Adding button for exporting csv */}
+                <View style={{ height: 10 }} />
+                <PrimaryButton label="Export Data (CSV)" variant="secondary" onPress={handleExportCSV} />
 
                 {/* Account section */}
                 <Text style={[styles.sectionLabel, { color: colors.textSecondary, marginTop: 20 }]}>Account</Text>
                 <PrimaryButton label="Sign Out" variant="secondary" onPress={handleLogout} />
                 <View style={{ height: 10 }} />
                 <PrimaryButton label="Delete Account" variant="danger" onPress={handleDeleteAccount} />
+
+                {/*
+                ----- Iteration 9: Dark Mode, CSV Export, Final Iteration -----
+                Appearance section for light and dark mode toggling
+                I learned how to add this functionality using the following online resources:
+                - Light & Dark Mode in React Native, Code & Nice, YouTube Tutorial, Available at:
+                https://www.youtube.com/watch?v=ouuRn-QadP0
+                - Switch Between Dark Theme And Light Theme Mode In React Native & Expo Apps, Rohit Kumar Thakur, Medium Blog, Aailable at: 
+                https://ninza7.medium.com/switch-between-dark-theme-and-light-theme-mode-in-react-native-expo-apps-40c45a2a1468
+                */}
+                <Text style={[styles.sectionLabel, { color: colors.textSecondary, marginTop: 20 }]}>App Appearance</Text>
+                <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder  }]}>
+                    <Text style={[styles.label, { color: colors.textSecondary }]}>Theme</Text>
+                    <View style={[styles.themeRow]}>
+                        {(['light', 'dark', 'system'] as const).map((t) => (
+                            <Pressable
+                                key={t}
+                                onPress={() => setMode(t)}
+                                style={[
+                                    styles.themePill,
+                                    {
+                                        backgroundColor: mode === t ? colors.primary + '20' : colors.surfaceAlt,
+                                        borderColor: mode === t ? colors.primary : colors.border,
+                                    },
+                                ]}
+                            >
+                                <Text style={[styles.themePillText, { color: mode === t ? colors.primary : colors.textSecondary }]}>
+                                    {t === 'light' ? '☀️ Light' : t === 'dark' ? '🌙 Dark' : '📱 System'}
+                                </Text>
+                            </Pressable>    
+                        ))}
+                    </View>
+                </View>
+
 
                 {/* About Section */}
                 <Text style={[styles.sectionLabel, { color: colors.textSecondary, marginTop: 20 }]}>About</Text>
@@ -158,4 +208,13 @@ const styles = StyleSheet.create({
     sectionLabel: { fontSize: 12, fontWeight: '600', marginBottom: 10, textTransform: 'uppercase' },
     aboutText: { fontSize: 14, fontWeight: '700' },
     aboutSub: { fontSize: 12, marginTop: 2 },
+    themeRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
+    themePill: { 
+        borderRadius: 999,
+        borderWidth: 1,
+        flex: 1,
+        alignItems: 'center',
+        paddingVertical: 10,
+    },
+    themePillText: { fontSize: 13, fontWeight: '600' },
 });

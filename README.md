@@ -112,3 +112,17 @@ https://github.com/indiespirit/react-native-chart-kit
 
 21. react_native-restate/.../seed.ts, Adrian Hajdin, GitHub, Available at:
 https://github.com/adrianhajdin/react_native-restate/blob/main/lib/seed.ts
+
+----- Iteration 9: App Theme Toggle + CSV Export -----
+
+22. Light & Dark Mode in React Native, Code & Nice, YouTube Tutorial, Available at:
+https://www.youtube.com/watch?v=ouuRn-QadP0
+
+23. Switch Between Dark Theme And Light Theme Mode In React Native & Expo Apps, Rohit Kumar Thakur, Medium Blog, Aailable at: 
+https://ninza7.medium.com/switch-between-dark-theme-and-light-theme-mode-in-react-native-expo-apps-40c45a2a1468
+
+24. Share API, React Native Docs, Available at:
+https://reactnative.dev/docs/share
+
+25. Generate and Share Excel Styled Spreadsheets Using React Native, Victor Sanchez, Medium Blogpost, Available at:
+https://medium.com/better-programming/generate-and-share-excel-styled-spreadsheets-using-react-native-e2034492c234
