@@ -126,3 +126,14 @@ https://reactnative.dev/docs/share
 
 25. Generate and Share Excel Styled Spreadsheets Using React Native, Victor Sanchez, Medium Blogpost, Available at:
 https://medium.com/better-programming/generate-and-share-excel-styled-spreadsheets-using-react-native-e2034492c234
+
+----- Iteration 10: Bonus Feature: Motivational Quote of the Day -----
+
+26. ZenQuotes.io, API Documentation, Available at:
+https://docs.zenquotes.io/zenquotes-documentation/
+
+27. React Native API call, Code Step by Step, Available at:
+https://www.youtube.com/watch?v=NuKQk7nbk0k
+
+28. Build Quote Generator App in React Native, Pradip Debnath Available at::
+https://www.youtube.com/watch?v=OV0qnHInNw0

@@ -20,11 +20,15 @@ import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+// ----- Iteration 10: Bonus Feature: Motivational Quote of the Day -----
+// importing the useQuote hook to display a motivational quote on the home screen
+import { useQuote } from '@/hooks/useQuote';
 
 // home screen - shows welcome message and login/signup options for unauthenticated users
 export default function HomeScreen() {
     const { user, logout } = useAuth();
     const { colors } = useTheme();
+    const { quote, loading: quoteLoading } = useQuote();
     const { habits, categories, getCategoryById, isCompletedToday } = useHabits();
     const router = useRouter();
 
@@ -58,6 +62,21 @@ export default function HomeScreen() {
                 title={`Welcome ${user?.username ?? 'to HabitTracker'}`}
                 subtitle={`${habits.length} habit(s) being tracked.`}
             />
+
+            {/* 
+            ----- Iteration 10: Bonus Feature: Motivational Quote of the Day -----
+            Displaying a motivational quote at the top of the home screen to inspire users to stay consistent with their habits.
+            */}
+            {quote && !quoteLoading && (
+                <View style={[styles.quoteCard, { backgroundColor: colors.primary + '12', borderColor: colors.primary + '30' }]}>
+                    <Text style={[styles.quoteText, { color: colors.text }]}>
+                        "{quote.text}"
+                    </Text>
+                    <Text style={[styles.quoteAuthor, { color: colors.textSecondary }]}>
+                        - {quote.author}
+                    </Text>
+                </View>
+            )}
 
             {/* ----- Iteration 5: Habits Logging ----- */}
             {/* Adding a progress bar for users to see how many habits they have completed today */}
@@ -98,23 +117,25 @@ export default function HomeScreen() {
 
             {/* Category filter */}
             {categories.length > 0 && (
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.pills} contentContainerStyle={styles.pillsContent}>
-                    <FilterPill
-                        label="All"
-                        active={selectedCategoryID === null}
-                        onPress={() => setSelectedCategoryID(null)}
-                        color={colors.primary}
-                    />
-                    {categories.map((cat) => (
+                <View style={styles.pillsWrapper}>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.pillsContent}>
                         <FilterPill
-                            key={cat.id}
-                            label={`${cat.icon} ${cat.name}`}
-                            active={selectedCategoryID === cat.id}
-                            onPress={() => setSelectedCategoryID(cat.id)}
-                            color={cat.color}
+                            label="All"
+                            active={selectedCategoryID === null}
+                            onPress={() => setSelectedCategoryID(null)}
+                            color={colors.primary}
                         />
-                    ))}
-                </ScrollView>
+                        {categories.map((cat) => (
+                            <FilterPill
+                                key={cat.id}
+                                label={`${cat.icon} ${cat.name}`}
+                                active={selectedCategoryID === cat.id}
+                                onPress={() => setSelectedCategoryID(cat.id)}
+                                color={cat.color}
+                            />
+                        ))}
+                    </ScrollView>
+                </View>
             )}
 
             <PrimaryButton label="Create New Habit" onPress={() => router.push('/habit/add' as any)} />
@@ -178,13 +199,14 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         fontSize: 15,
     },
-    pills: { marginBottom: 12, maxHeight: 44 },
-    pillsContent: { gap: 8, paddingRight: 10 },
+    pillsWrapper: { marginBottom: 12, height: 48, flexShrink: 0 },
+    pillsContent: { gap: 8, paddingRight: 10, alignItems: 'center', height: 48},
     pill: {
         paddingHorizontal: 14,
-        paddingVertical: 10,
+        paddingVertical: 8,
         borderRadius: 999,
         borderWidth: 1,
+        flexShrink: 0,
     },
     pillText: { fontSize: 13, fontWeight: '600' },
     list: { paddingBottom: 24, paddingTop: 8 },
@@ -213,5 +235,25 @@ const styles = StyleSheet.create({
     progressFill: {
         borderRadius: 999,
         height: '100%',
+    },
+
+    // ----- Iteration 10: Bonus Feature: Motivational Quote of the Day -----
+    // Quote card styling
+    quoteCard: {
+        borderRadius: 14,
+        borderWidth: 1,
+        padding: 16,
+        marginBottom: 12,
+    },
+    quoteText: {
+        fontSize: 14,
+        fontStyle: 'italic',
+        lineHeight: 20,
+    },
+    quoteAuthor: {
+        fontSize: 12,
+        fontWeight: '600',
+        textAlign: 'right',
+        marginTop: 8,
     },
 });
