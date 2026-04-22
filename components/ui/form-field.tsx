@@ -39,6 +39,7 @@ export default function FormField({
                     },
                     multiline && styles.multiline,
                     ]}
+                accessibilityLabel={label}
                 />
             </View>
     );

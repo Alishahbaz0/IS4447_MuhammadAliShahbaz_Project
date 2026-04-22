@@ -9,7 +9,14 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b07d4283-4bbc-4603-9689-9e4652584b1e"
+    }
+    }
     },
     "android": {
       "adaptiveIcon": {
@@ -43,7 +50,11 @@
       "reactCompiler": true
     },
     "extra": {
-      "router": {}
-    }
+      "router": {},
+      "eas": {
+        "projectId": "b07d4283-4bbc-4603-9689-9e4652584b1e"
+      }
+    },
+    "owner": "ali_shahbaz"
   }
 }

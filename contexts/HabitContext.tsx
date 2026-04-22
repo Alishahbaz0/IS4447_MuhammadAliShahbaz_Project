@@ -393,3 +393,5 @@ export function useHabits() {
     if (!context) throw new Error('useHabit must be used within a HabitProvider');
     return context;
 }
+
+export { HabitContext };
